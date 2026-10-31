@@ -17,7 +17,8 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="page" id="page" lang="en">
+<div class="page flower-pink" id="page" lang="en">
+  <svg class="sprite" aria-hidden="true" focusable="false"><defs><symbol id="fl" viewBox="0 0 100 100"><g style="fill:var(--fl-petal);stroke:var(--fl-shade);stroke-width:1.6;stroke-linejoin:round"><path d="M50 49C36 41 29 22 38 10C43 3 57 3 62 10C71 22 64 41 50 49Z"/><path transform="rotate(60 50 50)" d="M50 49C36 41 29 22 38 10C43 3 57 3 62 10C71 22 64 41 50 49Z"/><path transform="rotate(120 50 50)" d="M50 49C36 41 29 22 38 10C43 3 57 3 62 10C71 22 64 41 50 49Z"/><path transform="rotate(180 50 50)" d="M50 49C36 41 29 22 38 10C43 3 57 3 62 10C71 22 64 41 50 49Z"/><path transform="rotate(240 50 50)" d="M50 49C36 41 29 22 38 10C43 3 57 3 62 10C71 22 64 41 50 49Z"/><path transform="rotate(300 50 50)" d="M50 49C36 41 29 22 38 10C43 3 57 3 62 10C71 22 64 41 50 49Z"/></g><circle cx="50" cy="50" r="12.5" style="fill:var(--fl-center);stroke:var(--fl-shade);stroke-width:1"/><circle cx="46.5" cy="46" r="4.5" style="fill:var(--fl-hi);opacity:0.85"/></symbol></defs></svg>
   <header class="masthead">
     <h1 class="title">Mother’s Love and Peace Day <span class="title-b">Bingo</span></h1>
     <p class="season"><b>40 days</b> · Nov 1 – Dec 10</p>
@@ -40,6 +41,7 @@
         <span class="key teach">Teachings of Mother</span>
         <span class="key smile">Each Day Smile</span>
       </div>
+      <div class="picker" id="pPicker" role="group" aria-label="Your flower"></div>
       <div class="frame">
         <div class="band"><span id="pDate">Today</span><span class="band-day" id="pDay"></span></div>
         <div class="grid n4" id="pGrid" role="group" aria-label="Today’s practice card, 4 squares by 4"></div>
@@ -62,9 +64,9 @@
         </div>
         <div class="cal-grid" id="calGrid"></div>
         <div class="cal-key" aria-hidden="true">
-          <span><i class="k-done"></i>Practiced</span>
-          <span><i class="k-bingo"></i>BINGO day</span>
-          <span><i class="k-today"></i>Today</span>
+          <span><svg class="kfl faint" viewBox="0 0 100 100"><use href="#fl"></use></svg>Practiced</span>
+          <span><svg class="kfl" viewBox="0 0 100 100"><use href="#fl"></use></svg>BINGO day</span>
+          <span><i></i>Today</span>
         </div>
       </section>
     </section>
@@ -92,6 +94,7 @@
         <span class="key teach">Teachings of Mother</span>
         <span class="key smile">Each Day Smile</span>
       </div>
+      <div class="picker" id="gPicker" role="group" aria-label="Your flower"></div>
       <div class="frame">
         <div class="band letters" aria-hidden="true"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
         <div class="grid n5" id="gGrid" role="group" aria-label="Your game card, 5 squares by 5"></div>

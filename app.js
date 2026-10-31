@@ -13,6 +13,9 @@
   const FAMILY = { love: 'The Words of Mother’s Love', teach: 'Teachings of Mother', smile: 'Each Day Smile' };
   const FREE = 'FREE';
   const KEY = 'mlpd-bingo';
+  const FLOWERS = [['pink', 'Pink flower, yellow center'], ['white', 'White flower, orange center'],
+    ['cream', 'Cream flower, brown center'], ['tan', 'Tan flower, cream center']];
+  const FLOWER_IDS = FLOWERS.map((f) => f[0]);
   const CAMPAIGN_DAYS = 40;
   const campaignStart = () => new Date(2026, 10, 1); // Nov 1, 2026 (a Sunday)
 
@@ -70,6 +73,7 @@
     return {
       v: 1,
       full: false,
+      flower: 'pink',
       practice: { date: dayKey(now), card: dealPractice(now), marks: Array(16).fill(false) },
       history: {},
       game: { card: dealGame(), marks: gameMarks(), calls: [] }
@@ -84,6 +88,7 @@
     const out = blank(now);
     if (!s || typeof s !== 'object') return out;
     if (typeof s.full === 'boolean') out.full = s.full;
+    if (FLOWER_IDS.includes(s.flower)) out.flower = s.flower;
     if (s.history && typeof s.history === 'object') {
       Object.keys(s.history).forEach((k) => {
         const h = s.history[k];
@@ -127,7 +132,7 @@
     'gGrid', 'gNote', 'gBingo', 'gBingoLine', 'gBingoList', 'gFull', 'newCard', 'confirmNew', 'confirmNewYes', 'confirmNewNo', 'playAgain',
     'callNext', 'callNext2', 'callCount', 'callerCount', 'lastCalled', 'lastFamily', 'stageText', 'stageFamily',
     'undoCall', 'startOver', 'confirmReset', 'confirmResetText', 'confirmResetYes', 'confirmResetNo',
-    'flashLove', 'flashTeach', 'flashSmile'].forEach((id) => { el[id] = $(id); });
+    'flashLove', 'flashTeach', 'flashSmile', 'pPicker', 'gPicker'].forEach((id) => { el[id] = $(id); });
 
   // ---------- hyphen points for long words, so narrow squares break words cleanly on every phone ----------
   const HY = new Map(('Mag-nifi-cent-ly dis-ap-point-ed ex-pec-ta-tions Ter-rifi-cal-ly beau-ti-ful-ly com-plain-ing com-pli-ments ' +
@@ -139,6 +144,42 @@
     .split(' ').map((w) => [w.replace(/-/g, ''), w.replace(/-/g, '\u00AD')]));
   const hyph = (s) => s.replace(/[A-Za-z]+/g, (w) => HY.get(w) || w);
 
+  // ---------- the member's flower ----------
+  function flowerSvg(cls) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', cls);
+    svg.setAttribute('viewBox', '0 0 100 100');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    const use = document.createElementNS(NS, 'use');
+    use.setAttribute('href', '#fl');
+    use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#fl');
+    svg.appendChild(use);
+    return svg;
+  }
+  function buildPicker(box) {
+    const label = document.createElement('span');
+    label.className = 'picker-label';
+    label.textContent = 'Your flower';
+    box.appendChild(label);
+    FLOWERS.forEach(([id, name]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pick flower-' + id;
+      b.dataset.flower = id;
+      b.setAttribute('aria-label', name);
+      b.title = name;
+      b.appendChild(flowerSvg('pick-fl'));
+      b.addEventListener('click', () => { S.flower = id; save(); applyFlower(); });
+      box.appendChild(b);
+    });
+  }
+  function applyFlower() {
+    FLOWER_IDS.forEach((id) => el.page.classList.toggle('flower-' + id, id === S.flower));
+    document.querySelectorAll('.pick').forEach((b) => b.setAttribute('aria-pressed', b.dataset.flower === S.flower ? 'true' : 'false'));
+  }
+
   // ---------- shared card rendering ----------
   function buildGrid(container, ids, onToggle) {
     container.textContent = '';
@@ -148,6 +189,7 @@
         d.className = 'cell free marked';
         d.dataset.id = FREE;
         d.innerHTML = '<span class="txt"><span class="free-word">Free</span></span>';
+        d.insertBefore(flowerSvg('bloom'), d.firstChild);
         container.appendChild(d);
         return d;
       }
@@ -161,6 +203,7 @@
       t.className = 'txt';
       if (p.family === 'smile') { const dot = document.createElement('span'); dot.className = 'dot'; dot.setAttribute('aria-hidden', 'true'); t.appendChild(dot); }
       t.appendChild(document.createTextNode(hyph(p.text)));
+      b.appendChild(flowerSvg('bloom'));
       b.appendChild(t);
       b.addEventListener('click', () => onToggle(i));
       container.appendChild(b);
@@ -259,7 +302,11 @@
       c.dataset.key = dayKey(d);
       if (i === 0) c.style.gridColumnStart = String(d.getDay() + 1);
       if (d.getDate() === 1) { const m = document.createElement('span'); m.className = 'mon'; m.textContent = MONTHS[d.getMonth()]; c.appendChild(m); }
-      c.appendChild(document.createTextNode(String(d.getDate())));
+      const num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = String(d.getDate());
+      c.appendChild(flowerSvg('bloom'));
+      c.appendChild(num);
       el.calGrid.appendChild(c);
       calCells.push(c);
     }
@@ -469,12 +516,13 @@
     const now = new Date();
     S = sanitize((data && data.state) || load(), now);
     rollPractice(now);
-    if (!bound) { bind(); buildFlash(); buildCalendar(); bound = true; }
+    if (!bound) { bind(); buildFlash(); buildCalendar(); buildPicker(el.pPicker); buildPicker(el.gPicker); bound = true; }
     buildPractice();
     buildGame();
     paintPractice(false);
     paintGame(false);
     paintCalls();
+    applyFlower();
     route();
     save();
   }

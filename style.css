@@ -24,6 +24,8 @@
   --called-bg: rgba(173, 135, 43, 0.17);
   --win-bg: #fff0c9;
   --ok: #2f7d3c;
+  --bloom-on: 0.9;
+  --bloom-full: 1;
   --frame-shadow: 0 16px 34px -18px rgba(90, 66, 10, 0.6);
   /* Each Day Smile colors, taken from the Each Day Smile sheet */
   --sun: #e5232b;
@@ -150,7 +152,6 @@ a { color: var(--gold-ink); }
   hyphens: manual;
   -webkit-hyphens: manual;
   overflow-wrap: break-word;
-  --ring: var(--dab-ring);
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
@@ -173,24 +174,42 @@ a { color: var(--gold-ink); }
 .d-sun { --dot: var(--sun); } .d-mon { --dot: var(--mon); } .d-tue { --dot: var(--tue); } .d-wed { --dot: var(--wed); }
 .d-thu { --dot: var(--thu); } .d-fri { --dot: var(--fri); } .d-sat { --dot: var(--sat); }
 
-/* Dauber mark: a circle sized to the square's shorter side, so it never gets clipped */
-.cell::before {
-  content: "";
+/* The member's own flower (picked like an emoji skin tone): blooms on a marked square,
+   glows along a BINGO line. The SVG keeps its shape, so it always fits the square's shorter side. */
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.flower-pink { --fl-petal: #f2c4c6; --fl-shade: #d9a2a8; --fl-center: #f6c945; --fl-hi: #fbe08a; }
+.flower-white { --fl-petal: #fbfaf6; --fl-shade: #d8d2c4; --fl-center: #f0ae3c; --fl-hi: #f7cf7e; }
+.flower-cream { --fl-petal: #f6edcb; --fl-shade: #d9c899; --fl-center: #b88b6e; --fl-hi: #d6b49a; }
+.flower-tan { --fl-petal: #c29776; --fl-shade: #9f785a; --fl-center: #f6edcb; --fl-hi: #fffaea; }
+.bloom {
   position: absolute;
   z-index: 0;
-  inset: 5px;
-  background: radial-gradient(circle closest-side, var(--dab) calc(100% - 3px), var(--ring) calc(100% - 2.5px), var(--ring) calc(100% - 0.5px), transparent 100%);
+  left: 4px;
+  top: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
   opacity: 0;
-  transform: scale(0.35);
-  transition: opacity 0.16s ease-out, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+  transform: scale(0.2) rotate(-50deg);
+  transition: opacity 0.2s ease-out, transform 0.36s cubic-bezier(0.2, 0.9, 0.25, 1.35);
   pointer-events: none;
 }
-.cell.marked::before { opacity: 1; transform: scale(1); }
-.cell.marked .txt { font-weight: 600; }
+/* A marked square lights up: it takes the daytime colors (the same values as the light palette
+   at the top), even in dark mode, so the flower shows in full color behind dark text. */
+.cell.marked, .cal-day.bingo {
+  --ink: #29291c; --paper-2: #fcf8ed; --gold-ink: #85661a; --gold-hi: #edd387; --olive: #34472a;
+  --cell-love: #fffbf2; --cell-teach: #e9edd4; --cell-smile: #f9e6bb; --cell-free: #f1d993; --win-bg: #fff0c9;
+  --sun: #e5232b; --mon: #e9b800; --tue: #b18a1d; --wed: #0fa24f; --thu: #1f72c3; --fri: #1d2f6c; --sat: #7a3aa3;
+}
+.cell { transition: background-color 0.25s ease-out, color 0.25s ease-out; }
+.cell.marked .bloom { opacity: var(--bloom-on); transform: none; }
+.cell.marked .txt { font-weight: 600; text-shadow: 0 0 3px var(--paper-2), 0 0 8px var(--paper-2); }
 /* Called hint (game only) */
 .cell::after { content: ""; position: absolute; inset: 4px; border: 2px dashed transparent; border-radius: 6px; pointer-events: none; }
 .cell.called::after { border-color: var(--gold); }
-.cell.win { background: var(--win-bg); --ring: var(--red); }
+.cell.win { background: var(--win-bg); }
+.cell.win .bloom { opacity: var(--bloom-full); filter: drop-shadow(0 0 6px var(--gold-hi)); }
+.cell.shine .bloom { animation: bloomglow 1.1s ease-out 1; }
+@keyframes bloomglow { 0% { transform: scale(1); } 30% { transform: scale(1.14); } 100% { transform: scale(1); } }
 .cell.shine { animation: shine 0.9s ease-out 1; }
 @keyframes shine { 0% { box-shadow: 0 0 0 0 var(--gold-hi); } 35% { box-shadow: 0 0 0 4px var(--gold-hi); } 100% { box-shadow: 0 0 0 0 transparent; } }
 .cell:focus-visible { outline: 3px solid var(--olive); outline-offset: -3px; }
@@ -238,18 +257,29 @@ a { color: var(--gold-ink); }
 .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
 .cal-dow { display: grid; justify-items: center; gap: 4px; padding-bottom: 2px; font: 600 0.66rem/1 var(--label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .cal-dow::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); }
-.cal-day { position: relative; display: grid; place-items: center; aspect-ratio: 1; max-width: 100%; border-radius: 10px; border: 1px solid var(--rule); font: 500 0.82rem/1 var(--label); font-variant-numeric: tabular-nums; color: var(--muted); }
-.cal-day .mon { position: absolute; top: 3px; left: 0; right: 0; text-align: center; font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.cal-day.done { background: var(--called-bg); border-color: transparent; color: var(--ink); }
-.cal-day.bingo { background: linear-gradient(135deg, var(--gold-hi), var(--gold)); border-color: transparent; color: var(--on-gold); font-weight: 600; }
+.cal-day { position: relative; display: grid; place-items: center; aspect-ratio: 1; max-width: 100%; border-radius: 10px; border: 1px solid var(--rule); font: 500 0.82rem/1 var(--label); font-variant-numeric: tabular-nums; color: var(--muted); overflow: hidden; }
+.cal-day .mon { position: absolute; z-index: 1; top: 3px; left: 0; right: 0; text-align: center; font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.cal-day .num { position: relative; z-index: 1; text-shadow: 0 0 3px var(--paper-2), 0 0 6px var(--paper-2); }
+.cal-day .bloom { left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); transform: none; }
+.cal-day.done { color: var(--ink); }
+.cal-day.done .bloom { opacity: 0.38; }
+.cal-day.bingo { background: var(--win-bg); border-color: transparent; color: var(--ink); font-weight: 600; }
+.cal-day.bingo .bloom { opacity: var(--bloom-full); filter: drop-shadow(0 0 3px var(--gold-hi)); }
 .cal-day.future { opacity: 0.5; }
 .cal-day.today { box-shadow: 0 0 0 2px var(--red); opacity: 1; }
 .cal-key { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 0.72rem/1.3 var(--label); color: var(--muted); }
 .cal-key span { display: inline-flex; align-items: center; gap: 6px; }
-.cal-key i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--rule); }
-.cal-key .k-done { background: var(--called-bg); border-color: transparent; }
-.cal-key .k-bingo { background: linear-gradient(135deg, var(--gold-hi), var(--gold)); border-color: transparent; }
-.cal-key .k-today { box-shadow: 0 0 0 2px var(--red); border-color: transparent; }
+.cal-key .kfl { width: 18px; height: 18px; }
+.cal-key .kfl.faint { opacity: 0.38; }
+.cal-key i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; box-shadow: 0 0 0 2px var(--red); }
+
+/* Flower picker */
+.picker { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 6px; }
+.picker-label { margin-right: 4px; font: 600 0.7rem/1.2 var(--label); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.pick { appearance: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 2px solid transparent; border-radius: 50%; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.pick svg { width: 34px; height: 34px; }
+.pick[aria-pressed="true"] { border-color: var(--olive); background: var(--paper-2); }
+.pick:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
 /* How to play */
 .howto { display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--rule); }
