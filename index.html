@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mother's Love and Peace Day Bingo</title>
+<meta name="description" content="Daily practice bingo for the 40-day Mother's Love and Peace Day campaign, plus a bingo game for gatherings.">
+<meta name="theme-color" content="#f7f0dc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12150e" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-title" content="Love Bingo">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Jost:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page" id="page" lang="en">
+  <header class="masthead">
+    <h1 class="title">Mother’s Love and Peace Day <span class="title-b">Bingo</span></h1>
+    <p class="season"><b>40 days</b> · Nov 1 – Dec 10</p>
+  </header>
+
+  <nav class="tabs" aria-label="Mode">
+    <a class="tab" id="tabPractice" href="#">Daily practice</a>
+    <a class="tab" id="tabGame" href="#game">Bingo game</a>
+  </nav>
+
+  <main class="views">
+    <!-- Daily practice -->
+    <section class="view" id="practiceView" aria-labelledby="practiceTitle">
+      <div class="intro">
+        <h2 class="view-title" id="practiceTitle">Today’s practice card</h2>
+        <p class="lede">Practice Mother’s words every day. Each time you say or live one of these today, tap its square. Four in a row is today’s BINGO, and a new card arrives tomorrow.</p>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span class="key love">The Words of Mother’s Love</span>
+        <span class="key teach">Teachings of Mother</span>
+        <span class="key smile">Each Day Smile</span>
+      </div>
+      <div class="frame">
+        <div class="band"><span id="pDate">Today</span><span class="band-day" id="pDay"></span></div>
+        <div class="grid n4" id="pGrid" role="group" aria-label="Today’s practice card, 4 squares by 4"></div>
+      </div>
+      <p class="note" id="pNote" aria-live="polite">Tap a square after you practice it.</p>
+      <div class="bingo" id="pBingo" role="status" hidden>
+        <p class="bingo-word">Bingo!</p>
+        <p class="bingo-line" id="pBingoLine"></p>
+        <p class="small">Keep going for another line, or practice the whole card.</p>
+      </div>
+      <div class="tools">
+        <label class="switch" for="pFull"><input type="checkbox" id="pFull"> Show full text</label>
+        <span class="count" id="pCount">0 of 16 practiced today</span>
+      </div>
+      <p class="saved" id="pSaved" aria-live="polite"><span class="tick" aria-hidden="true">✓</span><span>Saved automatically on this phone</span></p>
+      <section class="cal" aria-labelledby="calTitle">
+        <div class="cal-head">
+          <h3 id="calTitle">Your 40 days</h3>
+          <span class="count" id="calSummary">0 of 40 days practiced</span>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-key" aria-hidden="true">
+          <span><i class="k-done"></i>Practiced</span>
+          <span><i class="k-bingo"></i>BINGO day</span>
+          <span><i class="k-today"></i>Today</span>
+        </div>
+      </section>
+    </section>
+
+    <!-- Game: player card -->
+    <section class="view" id="gameView" aria-labelledby="gameTitle" hidden>
+      <div class="intro">
+        <h2 class="view-title" id="gameTitle">Bingo game</h2>
+        <p class="lede">For gatherings. The leader calls phrases, everyone marks their own card, and the first full line wins.</p>
+      </div>
+      <section class="ribbon" aria-labelledby="ribbonLabel">
+        <div class="ribbon-head">
+          <span class="label" id="ribbonLabel">Caller</span>
+          <span class="count" id="callCount">0 of 29 called</span>
+        </div>
+        <p class="last empty" id="lastCalled" aria-live="polite">Nothing called yet.</p>
+        <p class="fam" id="lastFamily"></p>
+        <div class="ribbon-actions">
+          <button class="btn primary" id="callNext" type="button">Call next</button>
+          <a class="btn ghost" href="#caller">Caller screen</a>
+        </div>
+      </section>
+      <div class="legend" aria-hidden="true">
+        <span class="key love">The Words of Mother’s Love</span>
+        <span class="key teach">Teachings of Mother</span>
+        <span class="key smile">Each Day Smile</span>
+      </div>
+      <div class="frame">
+        <div class="band letters" aria-hidden="true"><span>B</span><span>I</span><span>N</span><span>G</span><span>O</span></div>
+        <div class="grid n5" id="gGrid" role="group" aria-label="Your game card, 5 squares by 5"></div>
+      </div>
+      <p class="note" id="gNote" aria-live="polite">Tap a square to mark it.</p>
+      <div class="bingo" id="gBingo" role="status" hidden>
+        <p class="bingo-word">Bingo!</p>
+        <p class="bingo-line" id="gBingoLine"></p>
+        <ol id="gBingoList"></ol>
+        <p class="small">Leader: check these against the caller screen.</p>
+        <button class="btn primary" id="playAgain" type="button">Play again with a new card</button>
+      </div>
+      <div class="tools">
+        <label class="switch" for="gFull"><input type="checkbox" id="gFull"> Show full text</label>
+        <button class="btn ghost" id="newCard" type="button">New card</button>
+      </div>
+      <p class="saved" id="gSaved" aria-live="polite"><span class="tick" aria-hidden="true">✓</span><span>Saved automatically on this phone</span></p>
+      <div class="confirm" id="confirmNew" hidden>
+        <p>Deal a new card? Your marks will be cleared.</p>
+        <button class="btn primary" id="confirmNewYes" type="button">Deal new card</button>
+        <button class="btn ghost" id="confirmNewNo" type="button">Keep this card</button>
+      </div>
+      <section class="howto" aria-labelledby="howtoTitle">
+        <h3 id="howtoTitle">How to play</h3>
+        <ol>
+          <li>The leader taps <strong>Call next</strong> and reads the phrase aloud.</li>
+          <li>Find it on your card and tap the square to mark it.</li>
+          <li>Mark five in a row across, down or corner to corner, then call out “Bingo!” The FREE square counts.</li>
+        </ol>
+        <p>Everyone opens this page on their own phone and gets a different card. Only the leader taps Call next, and the caller screen can go on a TV or projector.</p>
+      </section>
+    </section>
+
+    <!-- Game: caller screen -->
+    <section class="view" id="callerView" aria-labelledby="callerTitle" hidden>
+      <div class="caller-top">
+        <a class="back" href="#game">← Back to my card</a>
+        <span class="count" id="callerCount">0 of 29 called</span>
+      </div>
+      <h2 class="sr" id="callerTitle">Caller screen</h2>
+      <div class="stage">
+        <p class="stage-fam" id="stageFamily">Ready</p>
+        <p class="stage-text empty" id="stageText">Tap Call next to draw the first phrase.</p>
+      </div>
+      <div class="caller-actions">
+        <button class="btn primary big" id="callNext2" type="button">Call next</button>
+        <button class="btn ghost" id="undoCall" type="button">Undo last call</button>
+        <button class="btn ghost" id="startOver" type="button">Start over</button>
+      </div>
+      <div class="confirm" id="confirmReset" hidden>
+        <p id="confirmResetText">Clear all calls and start a new round?</p>
+        <button class="btn primary" id="confirmResetYes" type="button">Start over</button>
+        <button class="btn ghost" id="confirmResetNo" type="button">Cancel</button>
+      </div>
+      <div class="flash">
+        <section aria-labelledby="flashLoveTitle"><h3 id="flashLoveTitle">The Words of Mother’s Love</h3><ol id="flashLove"></ol></section>
+        <section aria-labelledby="flashTeachTitle"><h3 id="flashTeachTitle">Teachings of Mother</h3><ol id="flashTeach"></ol></section>
+        <section aria-labelledby="flashSmileTitle"><h3 id="flashSmileTitle">Each Day Smile</h3><ol id="flashSmile"></ol></section>
+      </div>
+    </section>
+  </main>
+
+  <p class="foot">Wording of The Words of Mother’s Love from <a href="https://heavenlymotherslove.org/en/about" target="_blank" rel="noopener">heavenlymotherslove.org</a>.</p>
+</div>
+
+<script type="application/json" id="phrase-data">[
+{"id":"L1","family":"love","label":"Greeting","text":"How are you?"},
+{"id":"L2","family":"love","label":"Gratitude","text":"Thank you. It’s all thanks to you. You’ve worked hard."},
+{"id":"L3","family":"love","label":"Apology","text":"I’m sorry. It must have been hard on you."},
+{"id":"L4","family":"love","label":"Inclusiveness","text":"It’s okay. I understand."},
+{"id":"L5","family":"love","label":"Concession","text":"Please, after you."},
+{"id":"L6","family":"love","label":"Respect","text":"I’d love to hear more about your thoughts."},
+{"id":"L7","family":"love","label":"Encouragement","text":"I’ll pray (or root) for you. Everything will go well."},
+{"id":"L8","family":"love","label":"Consideration","text":"Can I give you a hand with anything?"},
+{"id":"L9","family":"love","label":"Compliment","text":"You’re amazing. You’re doing great!"},
+{"id":"T1","family":"teach","text":"As God always gives love, giving love is more blessed than receiving love."},
+{"id":"T2","family":"teach","text":"When we give glory to God, that glory will be ours in the end."},
+{"id":"T3","family":"teach","text":"When we look at things beautifully without hatred in our hearts, we can achieve perfect love."},
+{"id":"T4","family":"teach","text":"As Abraham received more blessings when he yielded for his nephew Lot, we, too, will receive more blessings when we yield for our brothers and sisters."},
+{"id":"T5","family":"teach","text":"Arrogance is feeling disappointed when our expectations are not met."},
+{"id":"T6","family":"teach","text":"Although others do not work, let us work faithfully without complaining. When we work with the mindset of an owner, we can work with joy and ease."},
+{"id":"T7","family":"teach","text":"Arrogance arises from a heart full of complaint. When we always serve God with gratitude, arrogance and complaint disappear, and humility will dwell in our hearts."},
+{"id":"T8","family":"teach","text":"When we compliment our brothers and sisters, compliments will return to us."},
+{"id":"T9","family":"teach","text":"As the sea receives all the dirt and purifies it, we should have a broad and beautiful heart to embrace the faults of our brothers and sisters."},
+{"id":"T10","family":"teach","text":"Whoever wants to be led by the Lamb should become a lamb smaller than the Lamb."},
+{"id":"T11","family":"teach","text":"Sacrifice is needed in the process of becoming a greater vessel."},
+{"id":"T12","family":"teach","text":"Even God came to serve, not to be served. When we serve one another without wanting to be served, God will be pleased."},
+{"id":"T13","family":"teach","text":"We should endure present sufferings for the Kingdom of Heaven will be ours."},
+{"id":"S1","family":"smile","label":"Sunday","text":"Smile Sweetly on Sunday"},
+{"id":"S2","family":"smile","label":"Monday","text":"Smile Magnificently on Monday"},
+{"id":"S3","family":"smile","label":"Tuesday","text":"Smile Terrifically on Tuesday"},
+{"id":"S4","family":"smile","label":"Wednesday","text":"Smile Wonderfully on Wednesday"},
+{"id":"S5","family":"smile","label":"Thursday","text":"Smile Tenderly on Thursday"},
+{"id":"S6","family":"smile","label":"Friday","text":"Smile Fervently on Friday"},
+{"id":"S7","family":"smile","label":"Saturday","text":"Smile Splendidly on Saturday"}
+]</script>
+
+<script src="app.js"></script>
+</body>
+</html>
